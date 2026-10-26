@@ -1,3 +1,21 @@
+
+Ex.No:6 GENERIC FUNCTION
+AIM:
+To write a java program to find the maximum value from the given type of
+elements using a generic function.
+PROCEDURE:
+1. Import necessary packages.
+2. Define the array with the elements
+3. Sets the first value in the array as the current maximum
+4. Find the maximum value by comparing each elements of the array
+5. Compile and run the program.
+6. Display the maximum value.
+
+
+
+
+
+
 import java.io.*;
 import java.util.*;
 
