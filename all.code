@@ -431,4 +431,9 @@ SELECT * FROM Emp_Log;
 
 
 
+delete folder 
+git credential-cache exit 2>/dev/null; rm -f ~/.gitconfig ~/.git-credentials ~/.config/git/config ~/.config/git/credentials; rm -rf ~/.config/gh; git -C ~/linuxleeee config --local --unset user.name 2>/dev/null; git -C ~/linuxleeee config --local --unset user.email 2>/dev/null
+cd ~ && rm -rf linuxleeee
+cd ~ && rm -rf linuxleeee
+
 
