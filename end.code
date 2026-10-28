@@ -9,7 +9,7 @@ CREATE TABLE stud (
     sid VARCHAR(10),
     sage INT,
     sarea VARCHAR(20)
-);
+); 
 
 SHOW TABLES;
 DESC stud;
