@@ -1,0 +1,587 @@
+-- =====================================================
+-- SETUP
+-- =====================================================
+CREATE DATABASE dbms_lab;
+USE dbms_lab;
+
+
+
+-- =====================================================
+-- EX NO 1: DATA DEFINITION COMMANDS
+-- =====================================================
+CREATE TABLE stud (
+  sname VARCHAR(30),
+  sid VARCHAR(10),
+  sage INT,
+  sarea VARCHAR(20)
+);
+SHOW TABLES;
+DESC stud;
+ALTER TABLE stud ADD phoneno INT AFTER sage;
+DESC stud;
+ALTER TABLE stud MODIFY sage VARCHAR(20);
+DESC stud;
+ALTER TABLE stud DROP COLUMN sage;
+DESC stud;
+TRUNCATE TABLE stud;
+DESC stud;
+DROP TABLE stud;
+DESC stud;
+
+-- OUTPUT:
+-- After ADD     : sname, sid, sage, phoneno, sarea
+-- After MODIFY  : sage becomes varchar(20)
+-- After DROP COL: sname, sid, phoneno, sarea
+-- After TRUNCATE: same structure, no records
+-- After DROP    : ERROR 1146 (42S02): Table 'dbms_lab.stud' doesn't exist
+
+
+
+-- =====================================================
+-- EX NO 2: DATA MANIPULATION COMMANDS
+-- =====================================================
+CREATE TABLE student (
+  sn CHAR(20),
+  regno INT,
+  address VARCHAR(40)
+);
+INSERT INTO student (sn, regno, address) VALUES
+('shalini', 1001, 'second street, chennai-73'),
+('vinosha', 1002, 'kurinji street, chennai-73'),
+('bharani', 1003, 'first street, chennai-73');
+SELECT * FROM student;
+
+ALTER TABLE student ADD sid INT;
+UPDATE student SET sid = 1 WHERE regno = 1001;
+UPDATE student SET sid = 2 WHERE regno = 1002;
+UPDATE student SET sid = 3 WHERE regno = 1003;
+SELECT * FROM student;
+
+SELECT * FROM student WHERE regno = 1001;
+SELECT * FROM student WHERE regno = 1001 OR sid = 2;
+SELECT * FROM student WHERE regno NOT IN (1001, 1002);
+
+DELETE FROM student WHERE sid = 1;
+SELECT * FROM student;
+
+-- OUTPUT (after update):
+-- shalini  1001  second street, chennai-73   1
+-- vinosha  1002  kurinji street, chennai-73  2
+-- bharani  1003  first street, chennai-73    3
+-- regno=1001            -> shalini
+-- regno=1001 OR sid=2   -> shalini, vinosha
+-- NOT IN (1001,1002)    -> bharani
+-- OUTPUT (after delete):
+-- vinosha  1002  kurinji street, chennai-73  2
+-- bharani  1003  first street, chennai-73    3
+
+
+
+-- =====================================================
+-- EX NO 3: WHERE CLAUSE AND AGGREGATE FUNCTIONS
+-- =====================================================
+CREATE TABLE Emp1 (
+  EmpID INT PRIMARY KEY,
+  Name VARCHAR(50),
+  Country VARCHAR(50),
+  Age INT,
+  mob INT
+);
+INSERT INTO Emp1 VALUES
+(1, 'Shubham', 'India', 23, 738479734),
+(2, 'Aman', 'Australia', 21, 436789555),
+(3, 'Naveen', 'Sri lanka', 24, 34873847),
+(4, 'Aditya', 'Austria', 21, 328440934),
+(5, 'Nishant', 'Spain', 22, 73248679);
+
+SELECT * FROM Emp1;
+SELECT * FROM Emp1 WHERE Age = 24;
+SELECT EmpID, Name, Country FROM Emp1 WHERE Age > 21;
+SELECT * FROM Emp1 WHERE Age BETWEEN 22 AND 24;
+SELECT * FROM Emp1 WHERE Name LIKE 'S%';
+SELECT * FROM Emp1 WHERE Name LIKE '%M%';
+SELECT Name FROM Emp1 WHERE Age IN (21, 23);
+
+-- OUTPUT:
+-- Age = 24           -> 3 Naveen Sri lanka 24 34873847
+-- Age > 21           -> 1 Shubham India | 3 Naveen Sri lanka | 5 Nishant Spain
+-- BETWEEN 22 AND 24  -> Shubham(23), Naveen(24), Nishant(22)
+-- LIKE 'S%'          -> Shubham
+-- LIKE '%M%'         -> Shubham, Aman
+-- IN (21,23)         -> Shubham, Aman, Aditya
+
+-- ---- Aggregate functions: Products ----
+CREATE TABLE Products (
+  product_id INT PRIMARY KEY,
+  name VARCHAR(50),
+  quantity_in_stock INT,
+  unit_price DECIMAL(5,2)
+);
+INSERT INTO Products VALUES
+(1, 'Foam Dinner Plate', 70, 1.21),
+(2, 'Pork - Bacon,back Peameal', 49, 4.65),
+(3, 'Lettuce - Romaine, Heart', 38, 3.35),
+(4, 'Brocolinni - Gaylan, Chinese', 90, 4.53),
+(5, 'Sauce - Ranch Dressing', 94, 1.63),
+(6, 'Petit Baguette', 14, 2.39),
+(7, 'Sweet Pea Sprouts', 98, 3.29),
+(8, 'Island Oasis - Raspberry', 26, 0.74),
+(9, 'Longan', 67, 2.26),
+(10, 'Broom - Push', 6, 1.09);
+
+SELECT COUNT(product_id) FROM Products;
+SELECT COUNT(product_id) FROM Products WHERE unit_price > 4;
+SELECT SUM(unit_price) FROM Products;
+SELECT AVG(quantity_in_stock) FROM Products;
+SELECT MIN(quantity_in_stock) FROM Products;
+SELECT MAX(quantity_in_stock) FROM Products;
+
+-- OUTPUT:
+-- COUNT = 10 | COUNT(price>4) = 2 | SUM = 25.14
+-- AVG = 55.2000 | MIN = 6 | MAX = 98
+
+-- ---- Aggregate functions: Customers (GROUP BY, HAVING) ----
+CREATE TABLE Customers (
+  customer_id INT PRIMARY KEY,
+  first_name VARCHAR(50),
+  last_name VARCHAR(50),
+  birth_date DATE,
+  phone VARCHAR(20),
+  address VARCHAR(60),
+  city VARCHAR(40),
+  state CHAR(2),
+  points INT
+);
+INSERT INTO Customers VALUES
+(1,'Alfred','MacCaffrey','1986-03-28','781-932-9754','0 Sage Terrace','Hampton','MA',2273),
+(2,'Ines','Brushfield','1986-04-13','804-427-9456','14187 Commercial Trail','Hampton','VA',947),
+(3,'Freddi','Boagey','1985-02-07','719-724-7869','251 Springs Junction','Colorado Springs','CO',2967),
+(4,'Ambur','Roseburgh','1974-04-14','407-231-8017','30 Arapahoe Terrace','Orlando','FL',457),
+(5,'Clemmie','Betchley','1973-11-07',NULL,'5 Spohn Circle','Arlington','TX',3675),
+(6,'Elka','Twiddell','1991-09-04','312-480-8498','7 Manley Drive','Chicago','IL',3073),
+(7,'Ilene','Dowson','1964-08-30','615-641-4759','50 Lillian Crossing','Nashville','TN',1672),
+(8,'Thacher','Naseby','1993-07-17','941-527-3977','538 Mosinee Center','Sarasota','FL',205),
+(9,'Romola','Rumgay','1992-05-23','559-181-3744','3520 Ohio Trail','Visalia','CA',1486),
+(10,'Levy','Mynett','1969-10-13','404-246-3370','68 Lawn Avenue','Atlanta','GA',796),
+(11,'Sam','Tully',NULL,NULL,'16 commecial centre','New York','TX',2600),
+(12,'Brian','Ross',NULL,NULL,'43 Bakers Street','New York','CO',1435);
+
+SELECT COUNT(customer_id), city FROM Customers
+GROUP BY city HAVING COUNT(customer_id) > 0;
+
+SELECT COUNT(customer_id), city FROM Customers
+GROUP BY city HAVING SUM(points) > 3000;
+
+-- OUTPUT (query 1):
+-- Hampton 2, Colorado Springs 1, Orlando 1, Arlington 1, Chicago 1,
+-- Nashville 1, Sarasota 1, Visalia 1, Atlanta 1, New York 2
+-- OUTPUT (query 2):
+-- Hampton 2, Arlington 1, Chicago 1, New York 2
+
+
+
+-- =====================================================
+-- EX NO 4: DIFFERENT TYPES OF OPERATORS IN SQL
+-- =====================================================
+CREATE TABLE numbers (num1 INT, num2 INT);
+INSERT INTO numbers VALUES (5, 10), (15, 20);
+
+-- Arithmetic
+SELECT num1, num2, num1 + num2 AS sum FROM numbers;
+SELECT num1, num2, num1 - num2 AS difference FROM numbers;
+SELECT num1, num2, num1 * num2 AS product FROM numbers;
+SELECT num1, num2, num1 / num2 AS quotient FROM numbers;
+SELECT num1, num2, num1 % num2 AS remainder FROM numbers;
+SELECT num1, num2, POWER(num1, 2) AS power FROM numbers;
+
+-- Logical
+SELECT * FROM numbers WHERE num1 > 5 AND num2 > 10;
+SELECT * FROM numbers WHERE num1 = 5 OR num2 = 20;
+
+-- Comparison
+SELECT * FROM numbers WHERE num1 = 5;
+SELECT * FROM numbers WHERE num1 != 5;
+SELECT * FROM numbers WHERE num1 <> 5;
+SELECT * FROM numbers WHERE num1 > 5;
+SELECT * FROM numbers WHERE num1 < 15;
+SELECT * FROM numbers WHERE num1 >= 15;
+SELECT * FROM numbers WHERE num1 <= 5;
+
+-- OUTPUT:
+-- sum: 15, 35 | difference: -5, -5 | product: 50, 300
+-- quotient: 0.5000, 0.7500 | remainder: 5, 15 | power: 25, 225
+-- AND -> (15,20) | OR -> (5,10) and (15,20)
+-- =5 -> (5,10) | !=5 and <>5 -> (15,20) | >5 -> (15,20)
+-- <15 -> (5,10) | >=15 -> (15,20) | <=5 -> (5,10)
+
+
+
+-- =====================================================
+-- EX NO 5: JOINS
+-- =====================================================
+CREATE TABLE t1 (id INT PRIMARY KEY, pattern VARCHAR(50) NOT NULL);
+CREATE TABLE t2 (id VARCHAR(50) PRIMARY KEY, pattern VARCHAR(50) NOT NULL);
+INSERT INTO t1 VALUES (1,'divot'), (2,'brick'), (3,'grid');
+INSERT INTO t2 VALUES ('a','brick'), ('b','grid'), ('c','diamond');
+
+-- CROSS JOIN
+SELECT t1.id, t2.id FROM t1 CROSS JOIN t2;
+
+-- INNER JOIN
+SELECT t1.id, t2.id FROM t1 INNER JOIN t2 ON t1.pattern = t2.pattern;
+
+-- LEFT JOIN
+SELECT t1.id, t2.id FROM t1 LEFT JOIN t2
+ON t1.pattern = t2.pattern ORDER BY t1.id;
+
+-- RIGHT JOIN
+SELECT t1.id, t2.id FROM t1 RIGHT JOIN t2
+ON t1.pattern = t2.pattern ORDER BY t2.id;
+
+-- SELF JOIN
+SELECT a.id, b.id FROM t1 a JOIN t1 b ON a.id < b.id;
+
+-- OUTPUT:
+-- CROSS : 9 rows (every t1.id with a, b, c)
+-- INNER : (2,a) (3,b)
+-- LEFT  : (1,NULL) (2,a) (3,b)
+-- RIGHT : (2,a) (3,b) (NULL,c)
+-- SELF  : (1,2) (1,3) (2,3)
+
+
+
+-- =====================================================
+-- EX NO 6: NESTED QUERIES / SUB QUERIES
+-- =====================================================
+CREATE TABLE sempls (
+  eno INT PRIMARY KEY,
+  ename VARCHAR(20),
+  edob VARCHAR(15),
+  gender VARCHAR(10),
+  doj VARCHAR(15),
+  desg VARCHAR(30),
+  bpay NUMERIC(10),
+  dno NUMERIC(10)
+);
+INSERT INTO sempls VALUES
+(1,'bala','15/1/84','m','16thJuly','lec',7000,1),
+(2,'kala','13/9/84','m','18thJuly','lec',10000,2),
+(3,'mala','17/6/85','f','19thJune','lec',19000,1),
+(4,'nila','20/6/85','f','19thJune','sr.lec',20000,1),
+(5,'vina','2/1/85','f','12thJuly','prof.',50000,2);
+
+CREATE TABLE sdments (dno INT PRIMARY KEY, dname VARCHAR(30));
+INSERT INTO sdments VALUES (1,'cse'), (2,'it');
+
+CREATE TABLE spros (pno INT PRIMARY KEY, pname VARCHAR(30), dno INT);
+INSERT INTO spros VALUES
+(81,'aaa',1),(82,'bbb',1),(83,'ccc',1),(84,'ddd',2),(85,'eee',2);
+
+CREATE TABLE sworks (
+  eno INT,
+  pno INT,
+  datework VARCHAR(20),
+  intime INT,
+  outtime INT,
+  PRIMARY KEY (eno, pno, datework)
+);
+INSERT INTO sworks VALUES
+(1,81,'11thJuly',9,10),
+(1,82,'11thJuly',10,11),
+(1,83,'11thJuly',11,12),
+(1,84,'11thJuly',12,1),
+(1,85,'11thJuly',1,2),
+(2,85,'12thJuly',8,9);
+
+-- Q1: basic pay less than average
+SELECT * FROM sempls WHERE bpay < (SELECT AVG(bpay) FROM sempls);
+
+-- Q2: employees per department
+SELECT dno, COUNT(eno) FROM sempls GROUP BY dno;
+
+-- Q3: basic pay between 10000 and 20000
+SELECT * FROM sempls WHERE bpay BETWEEN 10000 AND 20000;
+
+-- Q4: employees in projects controlled by 'cse'
+SELECT DISTINCT e.eno, e.ename
+FROM sempls e
+WHERE e.dno IN (SELECT dno FROM sdments WHERE dname = 'cse');
+
+-- Q5: employees who worked on more than 4 projects in a single day
+SELECT eno, ename, dno FROM sempls
+WHERE eno IN (
+  SELECT eno FROM sworks
+  GROUP BY eno, datework
+  HAVING COUNT(pno) > 4
+);
+
+-- OUTPUT:
+-- Q1: eno 1, 2, 3, 4 (average pay is 21200)
+-- Q2: dno 1 -> 3, dno 2 -> 2
+-- Q3: eno 2, 3, 4
+-- Q4: eno 1, 3, 4
+-- Q5: eno 1 (bala)
+
+
+
+-- =====================================================
+-- EX NO 7: PATTERN MATCHING
+-- =====================================================
+CREATE TABLE Products2 (
+  product_id INT PRIMARY KEY,
+  product_name VARCHAR(50) NOT NULL
+);
+INSERT INTO Products2 VALUES
+(1,'Samsung Phone'),(2,'Sony TV'),(3,'Apple Watch'),
+(4,'Cat Toy'),(5,'Cute Doll'),(6,'Ace Game');
+
+SELECT * FROM Products2 WHERE product_name LIKE 'S%';
+SELECT * FROM Products2 WHERE product_name LIKE '%apple%';
+SELECT * FROM Products2 WHERE product_name LIKE 'C_t%';
+SELECT * FROM Products2 WHERE product_name LIKE 'A%e';
+
+SELECT * FROM Products2 WHERE product_name REGEXP '^S';
+SELECT * FROM Products2 WHERE product_name REGEXP 'e$';
+SELECT * FROM Products2 WHERE product_name REGEXP 'o+';
+SELECT * FROM Products2 WHERE product_name REGEXP '[0-9]';
+
+-- OUTPUT:
+-- LIKE 'S%'      -> Samsung Phone, Sony TV
+-- LIKE '%apple%' -> Apple Watch
+-- LIKE 'C_t%'    -> Cat Toy, Cute Doll
+-- LIKE 'A%e'     -> Ace Game
+-- REGEXP '^S'    -> Samsung Phone, Sony TV
+-- REGEXP 'e$'    -> Samsung Phone, Ace Game
+-- REGEXP 'o+'    -> Samsung Phone, Sony TV, Cat Toy, Cute Doll
+-- REGEXP '[0-9]' -> Empty set
+
+
+
+-- =====================================================
+-- EX NO 8: CONSTRAINTS
+-- =====================================================
+CREATE TABLE Students (
+  student_id INT PRIMARY KEY,
+  student_name VARCHAR(50) NOT NULL,
+  email VARCHAR(100) UNIQUE,
+  age INT CHECK (age >= 18),
+  course VARCHAR(50) DEFAULT 'B.Tech'
+);
+INSERT INTO Students VALUES
+(1,'Arun','arun@gmail.com',20,'B.Tech'),
+(2,'Priya','priya@gmail.com',21,DEFAULT),
+(3,'Karthik','karthik@gmail.com',19,'B.Sc');
+SELECT * FROM Students;
+
+CREATE TABLE Departments (
+  dept_id INT PRIMARY KEY,
+  dept_name VARCHAR(50) NOT NULL
+);
+INSERT INTO Departments VALUES
+(101,'Computer Science'),(102,'Electronics'),(103,'Mechanical'),(104,'Civil');
+
+CREATE TABLE Faculty (
+  faculty_id INT PRIMARY KEY,
+  faculty_name VARCHAR(50) NOT NULL,
+  dept_id INT,
+  FOREIGN KEY (dept_id) REFERENCES Departments(dept_id)
+);
+INSERT INTO Faculty VALUES
+(1,'Dr. Ramesh',101),(2,'Dr. Priya',102),(3,'Dr. Karthik',101),(4,'Dr. Anitha',104);
+SELECT * FROM Faculty;
+
+-- Violation tests (each should give an error, except the 5th)
+INSERT INTO Faculty VALUES (5,'Dr. Test',999);
+INSERT INTO Students VALUES (4,'Ravi','ravi@gmail.com',15,'B.Tech');
+INSERT INTO Students VALUES (5,'Ravi',NULL,20,'B.Tech');
+INSERT INTO Students VALUES (6,NULL,'x@gmail.com',20,'B.Tech');
+INSERT INTO Students VALUES (1,'Dup','d@gmail.com',20,'B.Tech');
+
+-- OUTPUT:
+-- Students: (1 Arun 20 B.Tech) (2 Priya 21 B.Tech) (3 Karthik 19 B.Sc)
+-- Faculty : (1,101) (2,102) (3,101) (4,104)
+-- Faculty dept 999 -> ERROR 1452: foreign key constraint fails
+-- age 15           -> ERROR 3819: Check constraint is violated
+-- email NULL       -> succeeds (UNIQUE allows NULL)
+-- name NULL        -> ERROR 1048: Column 'student_name' cannot be null
+-- duplicate id 1   -> ERROR 1062: Duplicate entry '1' for key 'students.PRIMARY'
+
+
+
+-- =====================================================
+-- EX NO 9: FUNCTIONS
+-- =====================================================
+CREATE TABLE it (ID INT, Name VARCHAR(20), Dept INT);
+INSERT INTO it VALUES (101,'xxx',4021),(102,'yyy',4031),(103,'yyy',4021);
+SELECT * FROM it;
+
+CREATE FUNCTION Hi(eid INT)
+RETURNS CHAR(40)
+DETERMINISTIC
+RETURN 'Super';
+
+SELECT dept, Hi(101) FROM it;
+
+DELIMITER //
+CREATE FUNCTION Factorial(n INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+  DECLARE fact INT DEFAULT 1;
+  IF n <= 0 THEN
+    RETURN 1;
+  END IF;
+  factorial_loop: LOOP
+    SET fact = fact * n;
+    SET n = n - 1;
+    IF n < 1 THEN
+      LEAVE factorial_loop;
+    END IF;
+  END LOOP factorial_loop;
+  RETURN fact;
+END //
+DELIMITER ;
+
+SELECT Factorial(5);
+
+-- OUTPUT:
+-- dept  Hi(101)
+-- 4021  Super
+-- 4031  Super
+-- 4021  Super
+-- Factorial(5) = 120
+
+
+
+-- =====================================================
+-- EX NO 10: STORED PROCEDURES
+-- =====================================================
+CREATE TABLE item (
+  ITEMID INT, ACTUALPRICE INT, ORDID INT, PRODID INT
+);
+INSERT INTO item VALUES (101,2500,500,201),(102,3000,1600,202),(103,4000,600,203);
+SELECT * FROM item;
+
+DELIMITER //
+
+CREATE PROCEDURE func_in(IN a INT)
+BEGIN
+  SELECT actualprice FROM item WHERE itemid = a;
+END //
+
+CREATE PROCEDURE func_out(IN price INT, OUT Total_count INT)
+BEGIN
+  SELECT COUNT(*) INTO Total_count FROM item WHERE actualprice < price;
+END //
+
+CREATE PROCEDURE func_inout(INOUT cnt INT, IN inc INT)
+BEGIN
+  SET cnt = cnt + inc;
+END //
+
+DELIMITER ;
+
+CALL func_in(101);
+
+CALL func_out(4000, @Total_count);
+SELECT @Total_count;
+
+SET @counter = 1;
+CALL func_inout(@counter, 1);
+CALL func_inout(@counter, 1);
+CALL func_inout(@counter, 5);
+SELECT @counter;
+
+-- OUTPUT:
+-- func_in(101)  -> actualprice = 2500
+-- @Total_count  -> 2
+-- @counter      -> 8
+
+
+
+-- =====================================================
+-- EX NO 11: TRANSACTIONS, DCL AND TCL COMMANDS
+-- =====================================================
+CREATE TABLE Account (
+  AccNo INT PRIMARY KEY,
+  Name VARCHAR(30),
+  Balance INT
+);
+INSERT INTO Account VALUES (101,'Arun',5000);
+INSERT INTO Account VALUES (102,'Bala',7000);
+INSERT INTO Account VALUES (103,'Charan',8000);
+SELECT * FROM Account;
+
+START TRANSACTION;
+UPDATE Account SET Balance = Balance - 1000 WHERE AccNo = 101;
+SAVEPOINT S1;
+UPDATE Account SET Balance = Balance + 1000 WHERE AccNo = 102;
+SAVEPOINT S2;
+DELETE FROM Account WHERE AccNo = 103;
+ROLLBACK TO S1;
+COMMIT;
+SELECT * FROM Account;
+
+-- DCL (run as root)
+CREATE USER 'student'@'localhost' IDENTIFIED BY 'stud123';
+GRANT SELECT, INSERT ON dbms_lab.Account TO 'student'@'localhost';
+SHOW GRANTS FOR 'student'@'localhost';
+REVOKE INSERT ON dbms_lab.Account FROM 'student'@'localhost';
+SHOW GRANTS FOR 'student'@'localhost';
+
+-- OUTPUT (after COMMIT):
+-- 101  Arun    4000  (deduction kept)
+-- 102  Bala    7000  (update rolled back)
+-- 103  Charan  8000  (delete rolled back)
+-- After GRANT : GRANT SELECT, INSERT ON `dbms_lab`.`Account` TO `student`@`localhost`
+-- After REVOKE: GRANT SELECT ON `dbms_lab`.`Account` TO `student`@`localhost`
+
+
+
+-- =====================================================
+-- EX NO 12: SQL TRIGGERS (INSERT, DELETE, UPDATE)
+-- =====================================================
+CREATE TABLE Employee (
+  EmpID INT PRIMARY KEY,
+  Name VARCHAR(30),
+  Salary INT
+);
+CREATE TABLE Emp_Log (
+  LogID INT AUTO_INCREMENT PRIMARY KEY,
+  Action VARCHAR(20),
+  EmpID INT,
+  Name VARCHAR(30),
+  ActionTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TRIGGER after_employee_insert
+AFTER INSERT ON Employee
+FOR EACH ROW
+INSERT INTO Emp_Log(Action, EmpID, Name)
+VALUES ('INSERT', NEW.EmpID, NEW.Name);
+
+CREATE TRIGGER after_employee_delete
+AFTER DELETE ON Employee
+FOR EACH ROW
+INSERT INTO Emp_Log(Action, EmpID, Name)
+VALUES ('DELETE', OLD.EmpID, OLD.Name);
+
+CREATE TRIGGER after_employee_update
+AFTER UPDATE ON Employee
+FOR EACH ROW
+INSERT INTO Emp_Log(Action, EmpID, Name)
+VALUES ('UPDATE', NEW.EmpID, NEW.Name);
+
+INSERT INTO Employee VALUES (101,'Arun',30000);
+DELETE FROM Employee WHERE EmpID = 101;
+INSERT INTO Employee VALUES (102,'Bala',35000);
+UPDATE Employee SET Salary = 40000 WHERE EmpID = 102;
+
+SELECT * FROM Emp_Log;
+
+-- OUTPUT (ActionTime will show your current time):
+-- LogID  Action  EmpID  Name  ActionTime
+-- 1      INSERT  101    Arun  2026-10-28 10:15:00
+-- 2      DELETE  101    Arun  2026-10-28 10:20:00
+-- 3      INSERT  102    Bala  2026-10-28 10:25:00
+-- 4      UPDATE  102    Bala  2026-10-28 10:27:00
