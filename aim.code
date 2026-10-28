@@ -1,0 +1,155 @@
+EX.NO: 1 – DATA DEFINITION COMMANDS
+
+AIM: To perform DDL commands in SQL.
+
+ALGORITHM:
+
+1. Start the program.
+2. Create and select a database.
+3. Create the "stud" table.
+4. Add and modify columns using ALTER.
+5. Drop a column, truncate and drop the table.
+6. Stop the program.
+
+EX.NO: 2 – DATA MANIPULATION COMMANDS
+
+AIM: To perform DML commands in SQL.
+
+ALGORITHM:
+
+1. Start the program.
+2. Create and select a database.
+3. Create the "student" table.
+4. Insert student records into the table.
+5. Retrieve, update and delete records using SQL commands.
+6. Stop the program.
+
+EX.NO: 3 – WHERE CLAUSE AND AGGREGATE FUNCTIONS
+
+AIM: To use the WHERE clause and aggregate functions in SQL.
+
+ALGORITHM:
+
+1. Start the program.
+2. Create and select a database.
+3. Create the employee and product tables.
+4. Insert records into both tables.
+5. Retrieve records using WHERE, LIKE, BETWEEN and IN, and apply aggregate functions.
+6. Stop the program.
+
+EX.NO: 4 – DIFFERENT TYPES OF OPERATORS
+
+AIM: To perform arithmetic operations using SQL operators.
+
+ALGORITHM:
+
+1. Start the program.
+2. Create and select a database.
+3. Create the "numbers" table.
+4. Insert two sets of numbers.
+5. Perform addition, subtraction, multiplication, division and modulus operations.
+6. Stop the program.
+
+EX.NO: 5 – JOINS
+
+AIM: To retrieve data using different types of joins in SQL.
+
+ALGORITHM:
+
+1. Start the program.
+2. Create and select a database.
+3. Create the tables "t1" and "t2".
+4. Insert records into both tables.
+5. Perform CROSS JOIN, INNER JOIN, LEFT JOIN and RIGHT JOIN.
+6. Stop the program.
+
+EX.NO: 6 – NESTED QUERIES / SUBQUERIES
+
+AIM: To perform nested queries and subqueries in SQL.
+
+ALGORITHM:
+
+1. Start the program.
+2. Create and select a database.
+3. Create the employee, department, project and work tables.
+4. Insert records into all tables.
+5. Execute subqueries and retrieve data using GROUP BY, COUNT and BETWEEN.
+6. Stop the program.
+
+EX.NO: 7 – PATTERN MATCHING
+
+AIM: To perform pattern matching using LIKE and REGEXP.
+
+ALGORITHM:
+
+1. Start the program.
+2. Create and select a database.
+3. Create the "Products" table.
+4. Insert product records into the table.
+5. Retrieve matching records using LIKE and REGEXP.
+6. Stop the program.
+
+EX.NO: 8 – CONSTRAINTS
+
+AIM: To implement different constraints in SQL.
+
+ALGORITHM:
+
+1. Start the program.
+2. Create and select a database.
+3. Create the Students table with different constraints.
+4. Insert student records into the table.
+5. Create Departments and Faculty tables with primary and foreign key constraints, then display the records.
+6. Stop the program.
+
+EX.NO: 9 – FUNCTIONS
+
+AIM: To create and execute user-defined functions in SQL.
+
+ALGORITHM:
+
+1. Start the program.
+2. Create and select a database.
+3. Create the "it" table and insert records.
+4. Create and execute the "Hi" function.
+5. Create and execute the "Factorial" function.
+6. Stop the program.
+
+EX.NO: 10 – STORED PROCEDURES
+
+AIM: To create and execute stored procedures using IN, OUT and INOUT parameters.
+
+ALGORITHM:
+
+1. Start the program.
+2. Create and select a database.
+3. Create the "item" table and insert records.
+4. Create and execute the IN procedure.
+5. Create and execute the OUT and INOUT procedures.
+6. Stop the program.
+
+EX.NO: 11 – TRANSACTIONS, DCL AND TCL COMMANDS
+
+AIM: To perform transaction control and data control operations in SQL.
+
+ALGORITHM:
+
+1. Start the program.
+2. Create and select a database.
+3. Create the Account table and insert records.
+4. Perform transactions using START TRANSACTION, SAVEPOINT, ROLLBACK and COMMIT.
+5. Create a user and perform GRANT and REVOKE operations.
+6. Stop the program.
+
+EX.NO: 12 – SQL TRIGGERS
+
+AIM: To create triggers for INSERT, DELETE and UPDATE operations.
+
+ALGORITHM:
+
+1. Start the program.
+2. Create and select a database.
+3. Create the Employee and Emp_Log tables.
+4. Create triggers for INSERT, DELETE and UPDATE operations.
+5. Perform insert, delete and update operations and verify the log table.
+6. Stop the program.
